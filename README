@@ -1,0 +1,132 @@
+# API - Usuários
+
+Esta API implementa autenticação básica com registro, login e consulta ao perfil autenticado.
+
+Todas as rotas retornam respostas JSON.
+
+## Autenticação
+
+- O login retorna um **JWT** que deve ser enviado em `Authorization: Bearer <token>` nas rotas protegidas.
+- A rota `/profile` exige que o JWT esteja presente e válido.
+
+## Endpoints
+
+### POST `/register`
+
+Registra um novo usuário.
+
+#### Request Body (JSON)
+
+| Campo      | Tipo    | Obrigatório | Descrição                |
+|------------|---------|-------------|--------------------------|
+| email      | string  | Sim         | E-mail do usuário        |
+| username   | string  | Sim         | Nome de usuário (único) |
+| password   | string  | Sim         | Senha em texto claro    |
+
+#### Exemplo
+
+```http
+POST /register
+Content-Type: application/json
+
+{
+  "email": "joao@example.com",
+  "username": "joaosilva",
+  "password": "minhasenha123"
+}
+```
+
+#### 201 (Created)
+```json
+  {
+  "message": "Usuário criado com sucesso.",
+  "token": "<jwt-token>"
+}
+
+```
+
+#### 401 UNAUTHORIZED
+
+
+```json
+{
+  "message": "Esse usuário já existe"
+}
+
+```
+
+### POST `/login`
+Logar usuário registrando no sistema
+
+Nota: O usuário pode se identificar com email ou username.
+
+```http
+POST /login
+Content-Type: application/json
+
+```
+
+```json
+{
+  "username": "joaosilva",
+  "password": "minhasenha123"
+}
+
+```
+
+#### 200 OK
+
+```json
+{
+  "message": "Usuário logado com sucesso",
+  "token": "<jwt-token>"
+}
+
+```
+
+#### 404 NOT FOUND 
+
+```json
+{
+  "message": "Usuário não encontrado."
+}
+
+```
+
+#### 401 UNAUTHORIZED
+
+```json
+{
+  "message": "Senha incorreta."
+}
+
+
+```
+
+
+### GET `/profile`
+
+Retorna os dados do usuário autenticado.
+
+```http
+
+Authorization: Bearer <jwt-token>
+
+
+```
+
+
+#### 200 OK
+
+```json
+{
+  "id": "c6b8…",
+  "email": "joao@example.com",
+  "username": "joaosilva",
+  "password": "$2b$10$…"
+}
+
+```
+
+
+## Obrigado e até a proxima.

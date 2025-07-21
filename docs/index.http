@@ -1,0 +1,24 @@
+@api = http://localhost:8080/api
+
+POST {{api}}/register
+Content-Type: application/json
+
+{
+    "email": "alvarogabriel336@gmail.com",
+    "username": "Alvaro",
+    "password": "senha123"
+}
+###
+### @name login
+POST {{api}}/login
+Content-Type: application/json
+
+{
+    "email": "alvarogabriel@teste.com",
+    "username": "Alvaro",
+    "password": "senha123"
+}
+###
+@token = {{login.response.body.token}}
+GET {{api}}/profile
+Authorization: Bearer {{token}}
