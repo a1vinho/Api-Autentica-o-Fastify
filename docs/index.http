@@ -4,8 +4,8 @@ POST {{api}}/register
 Content-Type: application/json
 
 {
-    "email": "alvarogabriel336@gmail.com",
-    "username": "Alvaro",
+    "email": "teste@gmail.com",
+    "username": "Teste",
     "password": "senha123"
 }
 ###
@@ -14,8 +14,8 @@ POST {{api}}/login
 Content-Type: application/json
 
 {
-    "email": "alvarogabriel@teste.com",
-    "username": "Alvaro",
+    "email": "joaogabriel@teste.com",
+    "username": "teste",
     "password": "senha123"
 }
 ###
