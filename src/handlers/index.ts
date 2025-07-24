@@ -62,7 +62,8 @@ export default function (fastify: FastifyInstance) {
             };
             console.log(user);
             const comparePassword = await fastify.bcrypt.compare(password as string, user.password)
-            if (user.username === username || user.email === email && comparePassword) {
+            if ((user.username === username && comparePassword) || (user.email === email && comparePassword)) {
+                console.log(password)
                 const token = fastify.jwt.sign({ id: user.id, username: user.username }, '1d');
 
                 return reply.code(status_code.OK).send({

@@ -34,7 +34,7 @@ app.decorate('jwt', {
         return token;
     },
     verify: function (token: string): string | jwt.JwtPayload {
-        const payload = jwt.verify(token, process.env.SECRET);
+        const payload = jwt.verify(token, process.env.SECRET as string);
         if (!payload) {
             return "Você precisa está logado para essa ação";
         };

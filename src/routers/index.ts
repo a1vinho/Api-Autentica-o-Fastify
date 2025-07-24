@@ -3,6 +3,13 @@ import { SchemaGet, SchemaPost } from "../schemas";
 import Handlers from "../handlers/index";
 import { JwtPayload, JsonWebTokenError } from "jsonwebtoken";
 
+const rateLimit: Array<{
+    ip: string,
+    requests: {
+        request: number,
+        millesegunds: number
+    }
+}> = [];
 export default function (fastify: FastifyInstance): void {
 
     fastify.mysql.query(`
@@ -25,6 +32,41 @@ export default function (fastify: FastifyInstance): void {
     fastify.route({
         method: "POST",
         url: "/login",
+        onRequest: function (request, reply, done) {
+            console.log(request.ip)
+            const exists = rateLimit.find(user_request => {
+                return user_request.ip === request.ip;
+            });
+            if (exists) {
+                const segunds_request = (Date.now() - exists.requests.millesegunds) / 1000
+                if (segunds_request < 4) {
+                    return reply.code(429).send({ message: "Sua requisição foi bloqueada,tente novamente mais tarde." });
+                };
+                if (segunds_request >= 4 && exists.requests.request >= 3) {
+                    exists.requests.millesegunds = 0;
+                    exists.requests.request = 0;
+                };
+            };
+            if (exists && exists.requests.request < 3) {
+                exists.requests.request++;
+            };
+            if (exists && exists.requests.request >= 3 && !exists.requests.millesegunds) {
+                exists.requests.millesegunds = Date.now();
+                return reply.code(429).send({ message: "Sua requisição foi bloqueada,tente novamente mais tarde." });
+            };
+            if (!exists) {
+                console.log(rateLimit)
+                rateLimit.push({
+                    ip: request.ip,
+                    requests: {
+                        request: 1,
+                        millesegunds: 0
+                    }
+                });
+            };
+
+            done();
+        },
         schema: SchemaPost,
         handler: handlers.login
     });
